@@ -1,3 +1,5 @@
+import {getCommands} from "./quantum/commandsupport";
+
 var ko = require("knockout");
 require("./lib/material.min.js");
 require('../css/options.scss');
@@ -65,8 +67,28 @@ var OptionsViewModel = function OptionsViewModel() {
       if (!value) self.useMPRIS(false);
     });
 
+    let defaultCommands = getCommands();
+    let customCommands = obj['skq-command-bindings'] || defaultCommands;
+    let commandsGuiSettings = Object.entries(customCommands).map(([k, v]) => (
+      {
+        commandKey: k,
+        commandValue: v
+      }
+    ));
+    self.commandList = ko.observable(commandsGuiSettings);
+
     self.settingsInitialized(true);
   });
+
+  self.saveCommandBindings = function() {
+    let commandBindings = self.commandList().reduce((totl, curr) => {
+      totl[curr.commandKey] = curr.commandValue; return totl;
+    }, {});
+    chrome.runtime.sendMessage({
+      action: 'sqk-save-command-bindings',
+      commandBindings
+    });
+  };
 
   self.sitelistChanged = function(site) {
     if(self.sitelistInitialized()) {

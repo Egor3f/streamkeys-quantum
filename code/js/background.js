@@ -1,3 +1,5 @@
+import {updateConfig} from "./quantum/commandsupport";
+
 ;(function() {
   "use strict";
 
@@ -177,6 +179,9 @@
           window.skSites.checkTabEnabled(sender.tab.id)) {
         sendChangeNotification(request, sender);
       }
+    }
+    if(request.action === 'sqk-save-command-bindings') {
+      updateConfig(request.commandBindings);
     }
   });
 

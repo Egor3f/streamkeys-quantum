@@ -13,9 +13,9 @@ function getCommands () {
 }
 
 function serializeCommandsForNative(commands) {
-  return Object.entries(commands).map((commandName, keyBinding) => (
+  return Object.entries(commands).map(([commandName, keyBinding]) => (
     `${commandName}=${keyBinding}`
-  )).join('\n')
+  )).join('\n');
 }
 
 let port = null;
@@ -37,6 +37,7 @@ function listenForCommands(callback) {
 
 function updateConfig(newCommandBindings) {
   commandBindings = newCommandBindings;
+  console.log(serializeCommandsForNative(newCommandBindings));
   port.postMessage(serializeCommandsForNative(newCommandBindings));
 }
 

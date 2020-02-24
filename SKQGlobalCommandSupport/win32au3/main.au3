@@ -52,13 +52,15 @@ Func SendFirefoxMessage($cm)
 EndFunc
 
 Func UpdateKeymap($keymap)
+	InputBox("Keymap", "is:", $keymap)
 	Dim $kvArray = StringSplit($keymap, "\n")
-	$commandsLength = $kvArray[0]
+	Dim $commandsLength = $kvArray[0]
 	_ArrayDelete($kvArray, 0)
 	For $kv In $kvArray
 		$kvSplit = StringSplit($kv, "=")
 		Dim $k = StringStripWS($kvSplit[0], 8)
 		Dim $v = StringStripWS($kvSplit[1], 8)
+		InputBox("K, V", "is:", $k & " " & $v)
 		Dim $innerArray = [$k, $v]
 		_ArrayAdd($commandConfig, $innerArray)
 	Next
@@ -96,16 +98,21 @@ While 1
 	Dim $dataFromBrowser = ConsoleRead()
 	If @extended > 0 Then
 		If StringLen($newData) == 0 Then
-			$newDataSize = Dec(StringMid(Binary(StringLeft($dataFromBrowser, 4)), 3, 4), 1)
+			Dim $packetSizeString = StringLeft($dataFromBrowser, 4)
+			$packetSizeString = StringReverse($packetSizeString) ; Little endian
+			$newDataSize = Dec(StringMid(Binary($packetSizeString), 3, 8), 1)
+			InputBox("New Data Size", "is:", $newDataSize)
 			If $newDataSize <= 0 Then
 				ContinueLoop
 			EndIf
-			$newData &= $dataFromBrowser
+			$newData &= StringMid($dataFromBrowser, 5)
 			If StringLen($newData) >= $newDataSize Then
-				UpdateKeymap($newData)
+				UpdateKeymap(StringMid($newData, 2, StringLen($newData) - 2))
 				$newData = ""
 				$newDataSize = 0
 			EndIf
+		Else
+			$newData &= $dataFromBrowser
 		EndIf
 	EndIf
 WEnd

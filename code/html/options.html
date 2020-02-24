@@ -149,11 +149,15 @@
           <input type="checkbox" id="restart-yt" data-bind="checked: $data.youtubeRestart">
           <label for="restart-yt">Play/pause restarts YouTube videos when finished.</label>
         </p>
-        <p>
-          To change the hotkey bindings go to the chrome extensions page (enter chrome://extensions in the URL bar) and click the "Keyboard shortcuts" link at the bottom of the page. <a href="http://www.streamkeys.com/guide.html" target="_blank">Read the guide</a>          for more detailed information
-        </p>
         <h3>Hotkey Bindings</h3>
-        <button class="mdl-button mdl-js-button mdl-button--raised" data-bind="click: $data.openExtensionKeysPage">Configure Hotkeys</button>
+        <p>Hotkeys syntax is described here: <a target="_blank" href="https://www.autoitscript.com/autoit3/docs/functions/Send.htm">Autoit3 Help Page</a></p>
+        <!-- ko foreach: commandList -->
+        <div class="skq-command-binding">
+          <label data-bind="text: $data.commandKey"></label>
+          <input data-bind="textInput: $data.commandValue"/>
+        </div>
+        <!-- /ko -->
+        <button class="mdl-button mdl-js-button mdl-button--raised" data-bind="click: function() { $data.saveCommandBindings() }">Apply</button>
         <!-- /ko -->
       </div>
     </div>
