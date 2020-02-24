@@ -44,8 +44,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Files]
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: "..\extension\skq@efprojects.com.xpi"; DestDir: "{userappdata}\Mozilla\Extensions\{{ec8030f7-c20a-464f-9b0e-13a3a9e97384}\"; DestName: "skq@efprojects.com.xpi"; Flags: ignoreversion
-Source: "..\script\config.ini"; DestDir: "{localappdata}\SKQGlobalCommandSupport"; Flags: ignoreversion
-Source: "..\script\manifest.json"; DestDir: "{localappdata}\SKQGlobalCommandSupport"; Flags: ignoreversion
+Source: "..\config.ini"; DestDir: "{localappdata}\SKQGlobalCommandSupport"; Flags: ignoreversion
+Source: "..\manifest.json"; DestDir: "{localappdata}\SKQGlobalCommandSupport"; Flags: ignoreversion
 Source: "..\script\streamkeyshelper.exe"; DestDir: "{localappdata}\SKQGlobalCommandSupport"; Flags: ignoreversion
 
 [Icons]

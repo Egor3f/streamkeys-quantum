@@ -1,34 +1,45 @@
-;(function() {
-  "use strict";
+let commandBindings = {
+  playPause: '{MEDIA_PLAY_PAUSE}',
+  playNext: '{MEDIA_NEXT}',
+  playPrev: '{MEDIA_PREV}',
+  stop: '{MEDIA_STOP}',
+  mute: '{VOLUME_MUTE}',
+  like: '',
+  dislike: '',
+};
 
-  // Unfortunately, the original extension used very outdated build chain, so it does not even support ES2015.
-  //TODO: Change the whole build chain, move from grunt and browserify to webpack
+function getCommands () {
+  return commandBindings;
+}
 
-  var commands = ["playPause", "playNext", "playPrev", "stop", "mute", "like", "dislike"];
+function serializeCommandsForNative(commands) {
+  return Object.entries(commands).map((commandName, keyBinding) => (
+    `${commandName}=${keyBinding}`
+  )).join('\n')
+}
 
-  var getCommands = function() {
-    return commands;
-  };
+let port = null;
 
-  var port = null;
+function connectToGCS () {
+  if (!port)
+    port = browser.runtime.connectNative("skqgcs");
+}
 
-  var connectToGCS = function() {
-    if(!port)
-      port = browser.runtime.connectNative("skqgcs");
-  };
+function listenForCommands(callback) {
+  connectToGCS();
+  port.onMessage.addListener(function (response) {
+    console.log("Received Command: " + response);
+    if (~Object.keys(commandBindings).indexOf(response)) {
+      callback(response);
+    }
+  });
+}
 
-  var listenForCommands = function(callback) {
-    connectToGCS();
-    port.onMessage.addListener(function(response) {
-      console.log("Received Command: " + response);
-      if(~commands.indexOf(response)) {
-        callback(response);
-      }
-    });
-  };
+function updateConfig(newCommandBindings) {
+  commandBindings = newCommandBindings;
+  port.postMessage(serializeCommandsForNative(newCommandBindings));
+}
 
-  module.exports = {
-    getCommands: getCommands, listenForCommands: listenForCommands
-  };
-
-})();
+module.exports = {
+  getCommands, listenForCommands, updateConfig
+};
