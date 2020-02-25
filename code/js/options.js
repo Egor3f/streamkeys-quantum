@@ -68,7 +68,7 @@ var OptionsViewModel = function OptionsViewModel() {
     });
 
     let defaultCommands = getCommands();
-    let customCommands = obj['skq-command-bindings'] || defaultCommands;
+    let customCommands = Object.assign({}, defaultCommands, obj['skq-command-bindings'] || {});
     let commandsGuiSettings = Object.entries(customCommands).map(([k, v]) => (
       {
         commandKey: k,

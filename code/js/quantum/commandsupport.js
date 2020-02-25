@@ -6,6 +6,7 @@ let commandBindings = {
   mute: '{VOLUME_MUTE}',
   like: '',
   dislike: '',
+  _toggle: ''
 };
 
 function getCommands () {

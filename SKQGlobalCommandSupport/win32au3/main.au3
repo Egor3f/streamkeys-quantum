@@ -22,12 +22,27 @@
 Global $commandConfig = IniReadSection("config.ini", "commands")
 Global $commandsLength = $commandConfig[0][0]
 
-Func setHotkeys($toEnable=True)
+Opt("TrayAutoPause", 0)
+Opt("TrayMenuMode", 1)
+const $activeMessage = "SKQ Active — press to disable temporarily (to use other music/movie programs)"
+const $inactiveMessage = "SKQ Disabled — press to enable again"
+$toggleMenuItem = TrayCreateItem($activeMessage)
+TrayCreateItem("")
+$exitMenuItem = TrayCreateItem("Exit Stream Keys Quantum GCS Helper")
+TraySetState($TRAY_ICONSTATE_SHOW)
+TrayItemSetState($toggleMenuItem, $TRAY_CHECKED)
+$enabled = True
+
+Const $SpecialCommands = ["_toggle"]
+
+Func setHotkeys($toEnable=True, $toDisableSpecial=False)
 	For $i = 1 to $commandsLength
 		If $toEnable Then
 			HotKeySet($commandConfig[$i][1], "processCommand")
 		Else
-			HotKeySet($commandConfig[$i][1])
+			If _ArraySearch($SpecialCommands, $commandConfig[$i][0]) < 0 Or $toDisableSpecial Then
+				HotKeySet($commandConfig[$i][1])
+			EndIf
 		EndIf
 	Next
 EndFunc
@@ -36,7 +51,14 @@ Func processCommand()
 	Dim $command = @HotKeyPressed
 	For $i = 1 to $commandsLength
 		If $command == $commandConfig[$i][1] Then
-			sendFirefoxMessage($commandConfig[$i][0])
+			If $commandConfig[$i][0] == "_toggle" Then
+				$enabled = Not $enabled
+				setHotkeys($enabled)
+				TrayItemSetState($toggleMenuItem, $enabled ? $TRAY_CHECKED : $TRAY_UNCHECKED)
+				TrayItemSetText($toggleMenuItem, $enabled ? $activeMessage : $inactiveMessage)
+			Else
+				sendFirefoxMessage($commandConfig[$i][0])
+			EndIf
 			ExitLoop
 		EndIf
 	Next
@@ -50,30 +72,21 @@ Func sendFirefoxMessage($cm)
 EndFunc
 
 Func updateKeymap($keymap)
-	setHotKeys(False)
+	setHotKeys(False, True)
 	Dim $kvArray = StringSplit($keymap, "\u001e", 1)
 	Global $commandsLength = $kvArray[0]
 	Global $commandConfig[$commandsLength + 1][2]
 	$commandConfig[0][0] = $commandsLength
-	For $index = 1 To $commandsLength
-		Dim $kvSplit = StringSplit($kvArray[$index], "\u001f", 1)
-		$commandConfig[$index][0] = StringStripWS($kvSplit[1], 8)
-		$commandConfig[$index][1] = StringStripWS($kvSplit[2], 8)
+	For $i = 1 To $commandsLength
+		Dim $kvSplit = StringSplit($kvArray[$i], "\u001f", 1)
+		$commandConfig[$i][0] = StringStripWS($kvSplit[1], 8)
+		$commandConfig[$i][1] = StringStripWS($kvSplit[2], 8)
 	Next
+	; _ArrayDisplay($commandConfig)
 	IniWriteSection("config.ini", "commands", $commandConfig)
 	setHotkeys(True)
 EndFunc
 
-Opt("TrayAutoPause", 0)
-Opt("TrayMenuMode", 1)
-$activeMessage = "SKQ Active — press to disable temporarily (to use other music/movie programs)"
-$inactiveMessage = "SKQ Disabled — press to enable again"
-$toggleMenuItem = TrayCreateItem($activeMessage)
-TrayCreateItem("")
-$exitMenuItem = TrayCreateItem("Exit Stream Keys Quantum GCS Helper")
-TraySetState($TRAY_ICONSTATE_SHOW)
-TrayItemSetState($toggleMenuItem, $TRAY_CHECKED)
-$enabled = True
 setHotkeys()
 
 Global $newDataSize = 0
