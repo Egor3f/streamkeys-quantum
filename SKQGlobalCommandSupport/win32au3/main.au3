@@ -21,50 +21,47 @@
 
 Global $commandConfig = IniReadSection("config.ini", "commands")
 Global $commandsLength = $commandConfig[0][0]
-_ArrayDelete($commandConfig, 0)
 
 Func setHotkeys($toEnable=True)
-	For $i = 0 to $commandsLength -1
+	For $i = 1 to $commandsLength
 		If $toEnable Then
 			HotKeySet($commandConfig[$i][1], "processCommand")
 		Else
 			HotKeySet($commandConfig[$i][1])
 		EndIf
-		; ConsoleWrite($commandConfig[$i][1])
 	Next
 EndFunc
 
 Func processCommand()
 	Dim $command = @HotKeyPressed
-	For $i = 0 to $commandsLength - 1
+	For $i = 1 to $commandsLength
 		If $command == $commandConfig[$i][1] Then
-			SendFirefoxMessage($commandConfig[$i][0])
+			sendFirefoxMessage($commandConfig[$i][0])
 			ExitLoop
 		EndIf
 	Next
 EndFunc
 
-Func SendFirefoxMessage($cm)
+Func sendFirefoxMessage($cm)
 	Dim $json = '"' & $cm & '"'
 	Dim $len = StringLen($json)
 	ConsoleWrite(Binary($len))
 	ConsoleWrite($json)
 EndFunc
 
-Func UpdateKeymap($keymap)
-	InputBox("Keymap", "is:", $keymap)
-	Dim $kvArray = StringSplit($keymap, "\n")
-	Dim $commandsLength = $kvArray[0]
-	_ArrayDelete($kvArray, 0)
-	For $kv In $kvArray
-		$kvSplit = StringSplit($kv, "=")
-		Dim $k = StringStripWS($kvSplit[0], 8)
-		Dim $v = StringStripWS($kvSplit[1], 8)
-		InputBox("K, V", "is:", $k & " " & $v)
-		Dim $innerArray = [$k, $v]
-		_ArrayAdd($commandConfig, $innerArray)
+Func updateKeymap($keymap)
+	setHotKeys(False)
+	Dim $kvArray = StringSplit($keymap, "\u001e", 1)
+	Global $commandsLength = $kvArray[0]
+	Global $commandConfig[$commandsLength + 1][2]
+	$commandConfig[0][0] = $commandsLength
+	For $index = 1 To $commandsLength
+		Dim $kvSplit = StringSplit($kvArray[$index], "\u001f", 1)
+		$commandConfig[$index][0] = StringStripWS($kvSplit[1], 8)
+		$commandConfig[$index][1] = StringStripWS($kvSplit[2], 8)
 	Next
 	IniWriteSection("config.ini", "commands", $commandConfig)
+	setHotkeys(True)
 EndFunc
 
 Opt("TrayAutoPause", 0)
@@ -83,8 +80,6 @@ Global $newDataSize = 0
 Global $newData = ""
 
 While 1
-	Sleep(1000)
-
     Switch TrayGetMsg()
 		Case $toggleMenuItem
 			$enabled = Not $enabled
@@ -101,13 +96,12 @@ While 1
 			Dim $packetSizeString = StringLeft($dataFromBrowser, 4)
 			$packetSizeString = StringReverse($packetSizeString) ; Little endian
 			$newDataSize = Dec(StringMid(Binary($packetSizeString), 3, 8), 1)
-			InputBox("New Data Size", "is:", $newDataSize)
 			If $newDataSize <= 0 Then
 				ContinueLoop
 			EndIf
 			$newData &= StringMid($dataFromBrowser, 5)
 			If StringLen($newData) >= $newDataSize Then
-				UpdateKeymap(StringMid($newData, 2, StringLen($newData) - 2))
+				updateKeymap(StringMid($newData, 2, StringLen($newData) - 2))
 				$newData = ""
 				$newDataSize = 0
 			EndIf

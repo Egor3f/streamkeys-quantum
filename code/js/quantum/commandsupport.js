@@ -14,8 +14,8 @@ function getCommands () {
 
 function serializeCommandsForNative(commands) {
   return Object.entries(commands).map(([commandName, keyBinding]) => (
-    `${commandName}=${keyBinding}`
-  )).join('\n');
+    `${commandName}\x1F${keyBinding}`
+  )).join('\x1E');
 }
 
 let port = null;

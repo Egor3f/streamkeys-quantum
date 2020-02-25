@@ -84,6 +84,9 @@ var OptionsViewModel = function OptionsViewModel() {
     let commandBindings = self.commandList().reduce((totl, curr) => {
       totl[curr.commandKey] = curr.commandValue; return totl;
     }, {});
+    chrome.storage.sync.set({
+      'skq-command-bindings': commandBindings
+    });
     chrome.runtime.sendMessage({
       action: 'sqk-save-command-bindings',
       commandBindings
