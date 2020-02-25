@@ -4,9 +4,9 @@
 #AutoIt3Wrapper_Change2CUI=y
 #AutoIt3Wrapper_Res_Comment=A helper application for StreamKeysQuantum Firefox extension. 100% Open source, see github
 #AutoIt3Wrapper_Res_Description=A helper application for StreamKeysQuantum Firefox extension. 100% Open source, see github
-#AutoIt3Wrapper_Res_Fileversion=1.0.180
+#AutoIt3Wrapper_Res_Fileversion=1.1.180
 #AutoIt3Wrapper_Res_ProductName=Stream Keys Quantum Global Command Support Helper
-#AutoIt3Wrapper_Res_ProductVersion=1.0.180
+#AutoIt3Wrapper_Res_ProductVersion=1.1.180
 #AutoIt3Wrapper_Res_CompanyName=efprojects.com
 #AutoIt3Wrapper_Res_LegalCopyright=(c) Egor Aristov, 2018-2020
 #AutoIt3Wrapper_Res_LegalTradeMarks=(c) efprojects.com
@@ -24,8 +24,8 @@ Global $commandsLength = $commandConfig[0][0]
 
 Opt("TrayAutoPause", 0)
 Opt("TrayMenuMode", 1)
-const $activeMessage = "SKQ Active — press to disable temporarily (to use other music/movie programs)"
-const $inactiveMessage = "SKQ Disabled — press to enable again"
+Const $activeMessage = "SKQ Active — press to disable temporarily (to use other music/movie programs)"
+Const $inactiveMessage = "SKQ Disabled — press to enable again"
 $toggleMenuItem = TrayCreateItem($activeMessage)
 TrayCreateItem("")
 $exitMenuItem = TrayCreateItem("Exit Stream Keys Quantum GCS Helper")
