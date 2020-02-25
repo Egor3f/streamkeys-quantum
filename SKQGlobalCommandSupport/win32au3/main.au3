@@ -113,13 +113,13 @@ While 1
 				ContinueLoop
 			EndIf
 			$newData &= StringMid($dataFromBrowser, 5)
-			If StringLen($newData) >= $newDataSize Then
-				updateKeymap(StringMid($newData, 2, StringLen($newData) - 2))
-				$newData = ""
-				$newDataSize = 0
-			EndIf
 		Else
 			$newData &= $dataFromBrowser
+		EndIf
+		If StringLen($newData) >= $newDataSize Then
+			updateKeymap(StringMid($newData, 2, StringLen($newData) - 2))
+			$newData = ""
+			$newDataSize = 0
 		EndIf
 	EndIf
 WEnd
