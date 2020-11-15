@@ -1,6 +1,5 @@
-;(function() {
-  "use strict";
-
+"use strict";
+(function() {
   var BaseController = require("BaseController");
 
   var controller = new BaseController({
@@ -10,7 +9,8 @@
   });
 
   controller.isPlaying = function() {
-    return this.doc().querySelector("[data-a-target='player-play-pause-button']").getAttribute("data-a-player-state") === "playing";
+    var button = this.doc().querySelector("[data-a-target='player-play-pause-button']");
+    return button && button.getAttribute("data-a-player-state") === "playing";
   };
 
 })();

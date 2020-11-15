@@ -1,8 +1,7 @@
-;(function() {
-  "use strict";
-
+"use strict";
+(function() {
   var _ = require("lodash"),
-      URL = require("urlutils");
+    URL = require("urlutils");
 
   // The _internal_ version of the objects in localstorage
   var STORAGE_VERSION = 1;
@@ -20,7 +19,7 @@
 
     // [A-Za-z0-9-] should capture all valid characters in a (sub)domain
     // The {0, 3} matching group is there to match up to 3 subdomains
-    var re = new RegExp("^(http|https):\/\/(?:[A-Za-z0-9-]*\\.){0,3}(?:" + inner + ")(\\.|:|$)+");
+    var re = new RegExp("^(http|https)://(?:[A-Za-z0-9-]*\\.){0,3}(?:" + inner + ")(\\.|:|$)+");
 
     if(opts.blacklist) {
       var blacklistRe = new RegExp("(" + opts.blacklist.join("|") + ")");
@@ -55,6 +54,7 @@
       "airsonic": { name: "AirSonic", url: "https://airsonic.github.io/"},
       "ambientsleepingpill": { name: "Ambient Sleeping Pill", url: "http://www.ambientsleepingpill.com" },
       "anghami": { name: "Anghami", url: "https://www.anghami.com" },
+      "apple": { name: "Apple Music", url: "https://beta.music.apple.com", controller: "AppleMusicController.js" },
       "arena": { name: "Are.na", url: "https://www.are.na/", alias: ["are"] },
       "asoftmurmur": { name: "A Soft Murmur", url: "http://www.asoftmurmur.com" },
       "audible": { name: "Audible", url: "http://www.audible.com" },
@@ -66,6 +66,7 @@
       "brain": { name: "BrainFM", url: "http://brain.fm", controller: "BrainFMController.js" },
       "castbox": { name: "Castbox", url: "https://castbox.fm", controller: "CastboxController.js" },
       "cloud.caster": { name: "Cloud Caster", url: "http://cloud-caster.com", controller: "CloudCasterController.js", alias: ["cloud-caster"] },
+      "coderadio": { name: "Code Radio", url: "https://coderadio.freecodecamp.org/", controller: "CodeRadioController.js" },
       "coursera": { name: "Coursera", url: "http://www.coursera.org" },
       "crave": { name: "Crave", url: "https://www.crave.ca", controller: "CraveController.js" },
       "deezer": { name: "Deezer", url: "http://www.deezer.com" },
@@ -87,6 +88,7 @@
       "giantbomb": { name: "Giantbomb", url: "http://giantbomb.com" },
       "phenopod": { name: "Phenopod", url: "https://phenopod.com" },
       "play.google": { name: "Google Play Music", url: "http://play.google.com", controller: "GoogleMusicController.js" },
+      "podcasts.google": { name: "Google Podcasts", url: "http://podcasts.google.com", controller: "GooglePodcastsController.js" },
       "playmoss": { name: "Playmoss", url: "http://www.playmoss.com" },
       "hearthis": { name: "HearThis.at", url: "http://www.hearthis.at" },
       "hoopla": { name: "Hoopla", url: "https://www.hoopladigital.com", alias:["hoopladigital"] },
@@ -118,6 +120,7 @@
       "music.naver": { name: "Naver Music", url: "https://playerui.music.naver.com", controller: "NaverMusicController.js"},
       "napster": { name: "Napster", url: "https://app.napster.com", controller: "NapsterController.js" },
       "netflix": { name: "Netflix", url: "http://www.netflix.com" },
+      "neverthink": { name: "Neverthink", url: "https://neverthink.tv", controller: "NeverthinkController.js" },
       "noise": { name: "NoiseSupply", url: "http://noise.supply", controller: "NoiseSupplyController.js" },
       "noisli": { name: "Noisli", url: "http://noisli.com", controller: "NoisliController.js" },
       "noonpacific": { name: "Noon Pacific", url: "http://www.noonpacific.com" },
@@ -134,6 +137,8 @@
       "pocketcasts": { name: "Pocketcasts", url: "https://play.pocketcasts.com" },
       "podster": { name: "Podster", url: "http://www.podster.fm" },
       "pogoplug": { name: "Pogoplug", url: "http://my.pogoplug.com/view" },
+      "poolside": { name: "Poolside FM", url: "https://poolside.fm/", controller: "PoolsideFM.js", alias: ["poolsidefm"] },
+      "primephonic": {name: "Primephonic", url: "https://www.primephonic.com/"},
       "primevideo": {name: "Prime Video", url: "https://www.primevideo.com"},
       "qobuz": { name: "Qobuz", url: "https://play.qobuz.com" },
       "music.qq": { name: "QQ Music", url: "https://y.qq.com/portal/player.html", controller: "QQController.js", alias: ["y.qq.com/portal/player.html"] },
@@ -146,7 +151,7 @@
       "seesu": { name: "Seesu.me", url: "http://www.seesu.me" },
       "shortorange": { name: "ShortOrange", url: "http://www.shortorange.com" },
       "siriusxm": { name: "SiriusXM", url: "https://player.siriusxm.com" },
-      "slacker": { name: "Slacker", url: "http://www.slacker.com" },
+      "livexlive": { name: "LiveXLive", url: "http://livexlive.com" },
       "somafm": { name: "SomaFM", url: "http://somafm.com", controller: "SomaFMController.js" },
       "songstr": { name: "Songstr", url: "http://www.songstr.com" },
       "songza": { name: "Songza", url: "http://www.songza.com" },
@@ -162,6 +167,7 @@
       "streamsquid": { name: "StreamSquid", url: "http://streamsquid.com/" },
       "subsonic": { name: "Subsonic", url: "http://www.subsonic.org" },
       "synology": { name: "Synology Audio Station", url: "https://www.synology.me", controller: "SynologyAudioStationController.js" },
+      "telegram": { name: "Telegram Web", url: "https://evgeny-nadymov.github.io/telegram-react/", controller: "TelegramReactController.js", alias: ["evgeny-nadymov", "telegram-react"] },
       "tidal": { name: "Tidal", url: "https://www.tidal.com", alias: ["tidalhifi"] },
       "tunein": { name: "TuneIn", url: "http://www.tunein.com" },
       "twitch": { name: "Twitch.tv", url: "http://www.twitch.tv" },
@@ -169,13 +175,16 @@
       "vibe": { name: "Vibe", url: "https://vibe.naver.com"},
       "vimeo": { name: "Vimeo", url: "https://vimeo.com" },
       "vk": { name: "Vkontakte", url: "http://www.vk.com" },
+      "wynk": { name: "Wynk", url: "https://www.wynk.in/" },
       "music.yandex": { name: "Yandex", url: "http://music.yandex.ru", controller: "YandexController.js" },
       "radio.yandex": { name: "Yandex Radio", url: "http://radio.yandex.ru", controller: "YandexRadioController.js" },
+      "radio": { name: "RadioGarden", url: "http://radio.garden", alias: "radiogarden", controller: "RadioGardenController.js" },
       "youarelistening": { name: "YouAreListening.to", url: "http://www.youarelistening.to", controller: "YouarelisteningtoController.js" },
       "xiami": { name: "Xiami", url: "http://www.xiami.com" },
       "music.youtube": { name: "YouTube Music", url: "https://music.youtube.com", controller: "YoutubeMusicController.js" },
       "youtube": { name: "YouTube", url: "http://www.youtube.com" },
       "youzeek": { name: "YOUZEEK", url: "http://www.youzeek.com" },
+      "zenva": { name: "Zenva", url: "https://academy.zenva.com/" },
       "zonga": { name: "Zonga", url: "http://asculta.zonga.ro", controller: "ZongaController.js" }
     };
 
@@ -190,7 +199,7 @@
 
     chrome.storage.sync.get(function(obj) {
       var objSet = _.has(obj, "hotkey-sites"),
-          storageObj = {};
+        storageObj = {};
 
       // Migrate old storage versions to new format
       var version = (typeof obj["hotkey-storage-version"] === "undefined") ? 0 : obj["hotkey-storage-version"];
@@ -200,19 +209,19 @@
         var siteObj =
           (version === 0)
             ? {
-                enabled: objSet ? obj["hotkey-sites"][siteKey] || false : true,
-                priority: 1,
-                alias: [],
-                showNotifications: false
-              }
+              enabled: objSet ? obj["hotkey-sites"][siteKey] || false : true,
+              priority: 1,
+              alias: [],
+              showNotifications: false
+            }
             : (objSet && obj["hotkey-sites"][siteKey])
               // Validate enabled/priority values in case of migration problems
               ? {
-                  enabled: _.isBoolean(obj["hotkey-sites"][siteKey].enabled) ? obj["hotkey-sites"][siteKey].enabled : true,
-                  priority: _.isNumber(obj["hotkey-sites"][siteKey].priority) ? obj["hotkey-sites"][siteKey].priority : 1,
-                  alias: _.isArray(obj["hotkey-sites"][siteKey].alias) ? obj["hotkey-sites"][siteKey].alias : [],
-                  showNotifications: _.isBoolean(obj["hotkey-sites"][siteKey].showNotifications) ? obj["hotkey-sites"][siteKey].showNotifications : false
-                }
+                enabled: _.isBoolean(obj["hotkey-sites"][siteKey].enabled) ? obj["hotkey-sites"][siteKey].enabled : true,
+                priority: _.isNumber(obj["hotkey-sites"][siteKey].priority) ? obj["hotkey-sites"][siteKey].priority : 1,
+                alias: _.isArray(obj["hotkey-sites"][siteKey].alias) ? obj["hotkey-sites"][siteKey].alias : [],
+                showNotifications: _.isBoolean(obj["hotkey-sites"][siteKey].showNotifications) ? obj["hotkey-sites"][siteKey].showNotifications : false
+              }
               : siteDefaults;
 
         that.addSite(
@@ -238,13 +247,13 @@
       chrome.storage.sync.set({ "hotkey-storage-version": STORAGE_VERSION });
 
       // Initialize popup open on update setting
-      if(!obj.hasOwnProperty("hotkey-open_on_update")) {
+      if(!Object.prototype.hasOwnProperty.call(obj,"hotkey-open_on_update")) {
         chrome.storage.sync.set({ "hotkey-open_on_update": true });
       }
-      if(!obj.hasOwnProperty("hotkey-use_mpris")) {
+      if(!Object.prototype.hasOwnProperty.call(obj,"hotkey-use_mpris")) {
         chrome.storage.sync.set({ "hotkey-use_mpris": false });
       }
-      if(!obj.hasOwnProperty("hotkey-youtube_restart")) {
+      if(!Object.prototype.hasOwnProperty.call(obj,"hotkey-youtube_restart")) {
         chrome.storage.sync.set({ "hotkey-youtube_restart": false });
       }
     });
@@ -380,7 +389,7 @@
    */
   Sitelist.prototype.getMusicTabsByUrl = function(url) {
     var sitelist_name = this.getSitelistName(url),
-        that = this;
+      that = this;
 
     var promise = new Promise(function(resolve, reject) {
       if(sitelist_name === null) reject([]);
